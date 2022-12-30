@@ -51,6 +51,7 @@ interface login_info {
   msg: string;
   data: any;
 }
+console.log("ssss");
 
 const model = reactive({
   account: "",
