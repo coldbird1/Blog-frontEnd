@@ -32,7 +32,7 @@ const createColumns = (): DataTableColumns<RowData> => [
   },
   {
     title: "标题",
-    key: "name",
+    key: "title",
   },
   {
     title: "类别",
