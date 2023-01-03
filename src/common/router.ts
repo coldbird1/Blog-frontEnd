@@ -14,6 +14,10 @@ let routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/dashboard/dashboard.vue'),
     children: [
       {
+        path: '',
+        redirect: '/dashboard/article'
+      },
+      {
         path: 'category',
         component: () => import('@/views/category/index.vue'),
       },

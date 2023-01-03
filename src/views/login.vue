@@ -7,25 +7,15 @@
           <n-input v-model:value="model.account" placeholder="" />
         </n-form-item>
         <n-form-item label="密码" path="password">
-          <n-input
-            type="password"
-            v-model:value="model.password"
-            placeholder=""
-            @keydown.enter="login"
-          />
+          <n-input type="password" v-model:value="model.password" placeholder="" @keydown.enter="login" />
         </n-form-item>
-        <div
-          style="
+        <div style="
             display: flex;
             justify-content: center;
             align-items: center;
             position: relative;
-          "
-        >
-          <n-checkbox
-            v-model:checked="model.rember"
-            style="position: absolute; left: 0"
-          >
+          ">
+          <n-checkbox v-model:checked="model.remember" style="position: absolute; left: 0">
             记住我
           </n-checkbox>
           <n-button round type="primary" @click="login"> 登录 </n-button>
@@ -51,12 +41,11 @@ interface login_info {
   msg: string;
   data: any;
 }
-console.log("ssss");
 
 const model = reactive({
   account: "",
   password: "",
-  rember: false,
+  remember: false,
 });
 console.log(localStorage.getItem("ikun_userInfo"));
 
@@ -65,6 +54,8 @@ if (localStorage.getItem("ikun_userInfo")) {
     JSON.parse(localStorage.getItem("ikun_userInfo") ?? "")?.account ?? "";
   model.password =
     JSON.parse(localStorage.getItem("ikun_userInfo") ?? "")?.password ?? "";
+  model.remember =
+    JSON.parse(localStorage.getItem("ikun_userInfo") ?? "")?.remember ?? false;
 }
 
 let rules = {
@@ -99,7 +90,7 @@ const login = (e: MouseEvent) => {
         .then((res: login_info): void => {
           let { code, data } = res.data;
           if (code == 200) {
-            message.success("登陆成功了呦");
+            // message.success("登陆成功了呦");
 
             let userInfo = {
               account: data.account,
@@ -109,14 +100,17 @@ const login = (e: MouseEvent) => {
             userStore.setUersInfo(userInfo);
 
             //账号密码保存到本地
-            if (model.rember) {
+            if (model.remember) {
               localStorage.setItem(
                 "ikun_userInfo",
                 JSON.stringify({
                   account: model.account,
                   password: model.password,
+                  remember: model.remember,
                 })
               );
+            } else {
+              localStorage.removeItem("ikun_userInfo");
             }
 
             router.push("/dashboard");
@@ -140,8 +134,6 @@ const login = (e: MouseEvent) => {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-}
-.background {
 }
 </style>
 

@@ -26,14 +26,12 @@ const menuActive = (path: string): boolean => {
 
 <template>
   <div>
-    <div class="layout-top"><h2>我来组成头部</h2></div>
+    <div class="layout-top">
+      <h2>我来组成头部</h2>
+    </div>
     <div class="layout-body">
       <div class="menus">
-        <div
-          v-for="(i, x) in menus"
-          @click="jumpTo(i.path)"
-          :class="{ isActived: menuActive(i.path) }"
-        >
+        <div v-for="(i, x) in menus" @click="jumpTo(i.path)" :class="{ isActived: menuActive(i.path) }">
           {{ i.name }}
         </div>
       </div>
@@ -72,10 +70,12 @@ const menuActive = (path: string): boolean => {
     text-align: center;
     width: 180px;
     height: calc(100vh - 60px);
+    background-color: #fff;
     border-right: 1px solid #dadada;
 
     .isActived {
       background-color: #a4cab6;
+      color: #fd760e;
     }
 
     div {
@@ -88,6 +88,7 @@ const menuActive = (path: string): boolean => {
 
   .main-content {
     padding: 10px;
+    width: calc(100vw - 180px);
   }
 }
 </style>
