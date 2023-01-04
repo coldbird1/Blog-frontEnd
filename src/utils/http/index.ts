@@ -96,7 +96,7 @@ class PureHttp {
                 // message.error('登陆过期，请重新登录')
                 router.push('/login')
               } else {
-                config.headers!["Authorization"] = token
+                config.headers!["token"] = token
                 resolve(config);
               }
             } else {

@@ -16,7 +16,7 @@ import { ref, reactive, inject } from "vue";
 import { FormInst, FormItemRule, useMessage } from "naive-ui";
 import { useUserStore } from "@/store/user";
 import { useRouter, useRoute } from "vue-router";
-import { getList } from "@/api/article";
+import { getList, deleteArticle } from "@/api/article";
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -100,14 +100,12 @@ const handleCheck = (rowKeys: DataTableRowKey[]) => {
 };
 
 //删除
-const deleteFn = () => {
+const deleteFn = async () => {
   console.log(checkedRowKeys.value);
-  checkedRowKeys.value.forEach(async (e) => {
-    const { code, msg } = await axios.put("/blog/_token/delete", { id: e });
-    if (code === 200) {
-      message.success("删除成功");
-    }
-  });
+  const { code, msg } = await deleteArticle({ ids: checkedRowKeys.value });
+  if (code === 200) {
+    message.success("删除成功");
+  }
 };
 </script>
 

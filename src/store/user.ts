@@ -15,9 +15,9 @@ export const useUserStore = defineStore('users', {
     }
   },
   getters: {
-    getToken(state) {
-      return state.token
-    },
+    // getToken(state) {
+    //   return state.token
+    // },
     // getNameAndAge(): string {
     //   return this.name + this.getAge; // 调用其它getter
     // },
@@ -29,6 +29,16 @@ export const useUserStore = defineStore('users', {
       this.token = data.token
       this.expires = data.expires
     }
+  },
+  // 开启数据缓存
+  persist: {
+    enabled: true,
+    strategies: [
+      {
+        key: 'pinia_userInfo',//设置存储的key
+        storage: localStorage,//表示存储在localStorage
+      }
+    ]
   }
 
 

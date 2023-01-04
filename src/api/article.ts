@@ -30,7 +30,18 @@ export type listArr = {
   category_name: string
 }
 
+export type deleteResult = {
+  /* 返回状态 */
+  code: number,
+  msg: string
+}
+
 /** 列表查询 */
 export const getList = (data?: object) => {
   return http.request<serachResult>("get", "/blog/search", { data });
+};
+
+/* 删除文章 */
+export const deleteArticle = (data?: object) => {
+  return http.request<deleteResult>("delete", "/blog/_token/delete", { data });
 };
