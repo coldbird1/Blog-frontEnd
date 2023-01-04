@@ -1,26 +1,33 @@
+
+<template>
+  <div class="search-content">
+    <n-button type="error" @click="deleteFn">删除</n-button>
+  </div>
+  <div class="table-container">
+    <n-data-table :columns="columns" :data="data" :pagination="pagination" :row-key="rowKey"
+      @update:checked-row-keys="handleCheck" />
+  </div>
+
+</template>
+
 <script setup lang="ts">
 import type { DataTableColumns, DataTableRowKey } from "naive-ui";
 import { ref, reactive, inject } from "vue";
 import { FormInst, FormItemRule, useMessage } from "naive-ui";
 import { useUserStore } from "@/store/user";
 import { useRouter, useRoute } from "vue-router";
-import { log } from "console";
+import { getList } from "@/api/article";
+
 const router = useRouter();
 const userStore = useUserStore();
 const axios: any = inject("axios");
 const message = useMessage();
 
 type RowData = {
-  key: number;
-  name: string;
-  age: string;
-  address: string;
-};
-
-type resData = {
-  code: number;
-  data: Array<any>;
-  msg: string;
+  id: number;
+  author?: string;
+  title: string;
+  content: string | null;
 };
 
 const createColumns = (): DataTableColumns<RowData> => [
@@ -36,26 +43,26 @@ const createColumns = (): DataTableColumns<RowData> => [
   },
   {
     title: "类别",
-    key: "age",
+    key: "category_name",
   },
   {
     title: "修改时间",
-    key: "address",
+    key: "create_time",
   },
 ];
 
 let data = reactive(<any>[]); //Table数据
 
 const getData = async () => {
-  const res = await axios.get("/blog/list", {});
-  const { code, data: resData } = res.data;
+  const res = await getList();
+  const { code, data: resData } = res;
   if (code == 200) {
     data.push(...resData);
   }
 };
 
 getData();
-console.log(data);
+// console.log(data);
 
 const checkedRowKeysRef = ref<DataTableRowKey[]>([]);
 const columns = createColumns();
@@ -87,22 +94,22 @@ const pagination = reactive({
     pagination.page = 1;
   },
 });
-const rowKey = (row: RowData) => row.address;
+const rowKey = (row: RowData) => row.id;
 const handleCheck = (rowKeys: DataTableRowKey[]) => {
   checkedRowKeysRef.value = rowKeys;
 };
+
+//删除
+const deleteFn = () => {
+  console.log(checkedRowKeys.value);
+  checkedRowKeys.value.forEach(async (e) => {
+    const { code, msg } = await axios.put("/blog/_token/delete", { id: e });
+    if (code === 200) {
+      message.success("删除成功");
+    }
+  });
+};
 </script>
-
-<template>
-  <div class="search-content">
-    搜索
-  </div>
-  <div class="table-container">
-    <n-data-table :columns="columns" :data="data" :pagination="pagination" :row-key="rowKey"
-      @update:checked-row-keys="handleCheck" />
-  </div>
-
-</template>
 
 <style lang="scss" scoped>
 .search-content {

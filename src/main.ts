@@ -3,9 +3,8 @@ import './style.css'
 import App from './App.vue'
 import { createPinia } from 'pinia'
 import naive from 'naive-ui'
-import { router } from './common/router'
+import { router } from '@/router'
 import axios from 'axios'
-
 
 axios.defaults.baseURL = "http://localhost:8080"
 

@@ -1,7 +1,7 @@
 
 <template>
-  <div class="background">
-    <n-card title="欢迎您" class="main">
+  <n-card title="欢迎您" class="main">
+    <n-spin :show="isLoading">
       <n-form ref="formRef" :model="model" :rules="rules">
         <n-form-item label="账号" path="account">
           <n-input v-model:value="model.account" placeholder="" />
@@ -21,7 +21,11 @@
           <n-button round type="primary" @click="login"> 登录 </n-button>
         </div>
       </n-form>
-    </n-card>
+    </n-spin>
+
+  </n-card>
+  <div class="background">
+
   </div>
 </template>
 
@@ -30,11 +34,13 @@ import { ref, reactive, inject } from "vue";
 import { FormInst, FormItemRule, useMessage } from "naive-ui";
 import { useUserStore } from "@/store/user";
 import { useRouter, useRoute } from "vue-router";
+import { getLogin } from "@/api/user";
 
 const router = useRouter();
 const userStore = useUserStore();
 const axios: any = inject("axios");
 const message = useMessage();
+let isLoading = ref(false);
 
 interface login_info {
   code: number;
@@ -47,7 +53,6 @@ const model = reactive({
   password: "",
   remember: false,
 });
-console.log(localStorage.getItem("ikun_userInfo"));
 
 if (localStorage.getItem("ikun_userInfo")) {
   model.account =
@@ -82,19 +87,20 @@ const login = (e: MouseEvent) => {
 
   formRef.value?.validate((errors) => {
     if (!errors) {
-      axios
-        .post("/admin/login", {
-          account: model.account,
-          password: model.password,
-        })
+      isLoading.value = true;
+
+      getLogin({
+        account: model.account,
+        password: model.password,
+      })
         .then((res: login_info): void => {
-          let { code, data } = res.data;
+          let { code, data } = res;
           if (code == 200) {
             // message.success("登陆成功了呦");
-
             let userInfo = {
               account: data.account,
               token: data.token,
+              expires: data.expires,
             };
             //保存用户信息
             userStore.setUersInfo(userInfo);
@@ -117,9 +123,15 @@ const login = (e: MouseEvent) => {
           } else {
             message.error("登陆失败了呦");
           }
+        })
+        .catch(() => {
+          message.error("网络链接异常呦");
+        })
+        .finally(() => {
+          isLoading.value = false;
         });
     } else {
-      message.error("错了错了，重新填奥");
+      message.error("信息不对，重新填奥");
       console.log("errors", errors);
     }
     messageReactive.destroy();

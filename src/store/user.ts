@@ -2,7 +2,8 @@ import { defineStore } from "pinia";
 
 export interface userInfo {
   account: string,
-  token: string
+  token: string,
+  expires: number
 }
 
 export const useUserStore = defineStore('users', {
@@ -10,6 +11,7 @@ export const useUserStore = defineStore('users', {
     return {
       account: '',
       token: '',
+      expires: 9999999,
     }
   },
   getters: {
@@ -25,6 +27,7 @@ export const useUserStore = defineStore('users', {
     setUersInfo(data: userInfo) {
       this.account = data.account
       this.token = data.token
+      this.expires = data.expires
     }
   }
 
