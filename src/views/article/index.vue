@@ -57,16 +57,16 @@ const getData = async () => {
   const res = await getList();
   const { code, data: resData } = res;
   if (code == 200) {
-    data.value = res;
+    data.value = resData;
   }
 };
 
 getData();
 // console.log(data);
 
-const checkedRowKeysRef = ref<DataTableRowKey[]>([]);
-const columns = createColumns();
-const checkedRowKeys = checkedRowKeysRef;
+let checkedRowKeysRef = ref<DataTableRowKey[]>([]);
+let columns = createColumns();
+let checkedRowKeys = checkedRowKeysRef;
 const pagination = reactive({
   page: 1,
   pageSize: 10,
@@ -105,6 +105,7 @@ const deleteFn = async () => {
   const { code, msg } = await deleteArticle({ ids: checkedRowKeys.value });
   if (code === 200) {
     message.success("删除成功");
+    checkedRowKeysRef.value = [];
     getData();
   }
 };
