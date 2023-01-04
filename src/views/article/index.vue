@@ -51,13 +51,13 @@ const createColumns = (): DataTableColumns<RowData> => [
   },
 ];
 
-let data = reactive(<any>[]); //Table数据
+let data = ref(<any>[]); //Table数据
 
 const getData = async () => {
   const res = await getList();
   const { code, data: resData } = res;
   if (code == 200) {
-    data.push(...resData);
+    data.value = res;
   }
 };
 
@@ -105,6 +105,7 @@ const deleteFn = async () => {
   const { code, msg } = await deleteArticle({ ids: checkedRowKeys.value });
   if (code === 200) {
     message.success("删除成功");
+    getData();
   }
 };
 </script>
