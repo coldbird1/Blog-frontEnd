@@ -58,6 +58,7 @@ const getData = async () => {
   const { code, data: resData } = res;
   if (code == 200) {
     data.value = resData;
+    checkedRowKeys.value = [];
   }
 };
 

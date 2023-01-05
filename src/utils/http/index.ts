@@ -91,6 +91,10 @@ class PureHttp {
             if (token) {
               const now = new Date().getTime();
               const expired = userStore.expires - now <= 0;
+              console.log('userStore.expires', userStore.expires);
+              console.log('now', now);
+
+
               if (expired) {
                 // token过期刷新返回登录页      
                 // message.error('登陆过期，请重新登录')

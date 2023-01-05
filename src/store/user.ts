@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { router } from "@/router";
 
 export interface userInfo {
   account: string,
@@ -11,7 +12,7 @@ export const useUserStore = defineStore('users', {
     return {
       account: '',
       token: '',
-      expires: 9999999,
+      expires: 0,
     }
   },
   getters: {
@@ -24,11 +25,19 @@ export const useUserStore = defineStore('users', {
   },
 
   actions: {
+    //保存用户信息及token
     setUersInfo(data: userInfo) {
       this.account = data.account
       this.token = data.token
       this.expires = data.expires
-    }
+    },
+    //登出
+    logOut() {
+      this.account = "";
+      this.token = "";
+      this.expires = 0
+      router.push("/login");
+    },
   },
   // 开启数据缓存
   persist: {

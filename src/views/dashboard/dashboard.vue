@@ -26,8 +26,9 @@ const menuActive = (path: string): boolean => {
 
 <template>
   <div>
-    <div class="layout-top">
+    <div class="layout-top" style="position:relative">
       <h2>我来组成头部</h2>
+      <n-button type="error" style="position:absolute;right:10px" @click="userStore.logOut()">退出</n-button>
     </div>
     <div class="layout-body">
       <div class="menus">
