@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { router } from "@/router";
+import { router, resetRouter } from "@/router";
 
 export interface userInfo {
   account: string,
@@ -37,6 +37,7 @@ export const useUserStore = defineStore('users', {
       this.token = "";
       this.expires = 0
       router.push("/login");
+      // resetRouter()
     },
   },
   // 开启数据缓存

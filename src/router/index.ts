@@ -40,7 +40,10 @@ const router: Router = createRouter({
   routes
 })
 
-
+function resetRouter() {
+  const newRouter = router;
+  (router as any).matcher = (newRouter as any).matcher // reset router
+}
 
 
 
@@ -49,4 +52,4 @@ export default router
 
 
 
-export { router, routes }
+export { router, routes, resetRouter }
