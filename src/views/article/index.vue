@@ -1,11 +1,13 @@
 
 <template>
-  <div class="search-content">
-    <n-button type="error" @click="deleteFn">删除</n-button>
-  </div>
-  <div class="table-container">
-    <n-data-table :columns="columns" :data="data" :pagination="pagination" :row-key="rowKey"
-      @update:checked-row-keys="handleCheck" />
+  <div class="all">
+    <div class="search-content">
+      <n-button type="error" @click="deleteFn">删除</n-button>
+    </div>
+    <div class="table-container">
+      <n-data-table :columns="columns" :data="data" :pagination="pagination" :row-key="rowKey"
+        @update:checked-row-keys="handleCheck" />
+    </div>
   </div>
 
 </template>
@@ -113,6 +115,10 @@ const deleteFn = async () => {
 </script>
 
 <style lang="scss" scoped>
+.all {
+  @include main-content;
+  background-image: url(@/assets/img/article.jpg);
+}
 .search-content {
   height: 50px;
 }

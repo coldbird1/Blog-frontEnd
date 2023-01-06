@@ -10,10 +10,14 @@ const message = useMessage();
 </script>
 
 <template>
-  <div class="main-plane">用户</div>
+  <div class="all"></div>
 </template>
 
 <style lang="scss" scoped>
+.all {
+  @include main-content;
+  background-image: url(@/assets/img/users.png);
+}
 </style>
 
 

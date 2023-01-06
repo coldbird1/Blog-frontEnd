@@ -8,5 +8,18 @@ export default defineConfig({
     alias: {
       '@': resolve(__dirname, './src')
     }
-  }
-})
+  },
+  css: {
+    preprocessorOptions: {
+      // 导入scss预编译程序
+      scss: {
+        additionalData: `@use "@/style/mixins.scss" as *;`,
+      },
+    },
+  },
+},
+
+
+)
+
+

@@ -72,18 +72,15 @@ class PureHttp {
         // NProgress.start();
         // 优先判断post/get等方法是否传入回掉，否则执行初始化设置等回掉
         if (typeof config.beforeRequestCallback === "function") {
-          console.log(111);
-
           config.beforeRequestCallback(config);
           return config;
         }
         if (PureHttp.initConfig.beforeRequestCallback) {
-          console.log(222);
           PureHttp.initConfig.beforeRequestCallback(config);
           return config;
         }
         /** 请求白名单，放置一些不需要token的接口（通过设置请求白名单，防止token过期后再请求造成的死循环问题） */
-        const whiteList = ["/refreshToken", "/login"];
+        const whiteList = ["/login"];
         return whiteList.some(v => config.url!.indexOf(v) > -1)
           ? config
           : new Promise(resolve => {
@@ -91,21 +88,19 @@ class PureHttp {
             if (token) {
               const now = new Date().getTime();
               const expired = userStore.expires - now <= 0;
-              console.log('userStore.expires', userStore.expires);
-              console.log('now', now);
-
-
+              // console.log('userStore.expires', userStore.expires);
+              // console.log('now', now);
               if (expired) {
                 // token过期刷新返回登录页      
                 // message.error('登陆过期，请重新登录')
-                router.push('/login')
+                userStore.logOut()
               } else {
                 config.headers!["token"] = token
                 resolve(config);
               }
             } else {
               // message.error('登陆过期，请重新登录')
-              router.push('/login')
+              userStore.logOut()
             }
           });
       },

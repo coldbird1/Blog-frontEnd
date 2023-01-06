@@ -1,16 +1,18 @@
 
 <template>
-  <div class="search-content">
-    <n-button type="info" @click="addFn">新增</n-button>
-    <n-button type="error" @click="deleteFn" style="margin:0 10px">删除</n-button>
-  </div>
-  <div class="table-container">
-    <n-data-table :columns="columns" :data="data" :pagination="pagination" :row-key="rowKey"
-      @update:checked-row-keys="handleCheck" />
-  </div>
+  <div class="all">
+    <div class="search-content">
+      <n-button type="info" @click="addFn">新增</n-button>
+      <n-button type="error" @click="deleteFn" style="margin:0 10px">删除</n-button>
+    </div>
+    <div class="table-container">
+      <n-data-table :columns="columns" :data="data" :pagination="pagination" :row-key="rowKey"
+        @update:checked-row-keys="handleCheck" />
+    </div>
 
-  <Modal :showModal="modalShow" :currentRow="currentRow" :status="modalStatus" @close="modalClose"
-    @submit="modalSubmit"></Modal>
+    <Modal :showModal="modalShow" :currentRow="currentRow" :status="modalStatus" @close="modalClose"
+      @submit="modalSubmit"></Modal>
+  </div>
 
 </template>
 
@@ -178,6 +180,10 @@ const modalSubmit = async (e: object) => {
 </script>
 
 <style lang="scss" scoped>
+.all {
+  @include main-content;
+  background-image: url(@/assets/img/content.jpg);
+}
 .search-content {
   height: 50px;
 }

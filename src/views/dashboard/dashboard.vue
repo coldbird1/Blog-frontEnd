@@ -67,28 +67,29 @@ const menuActive = (path: string): boolean => {
   .menus {
     padding: 0;
     box-sizing: border-box;
+    font-weight: 600;
+    font-size: 16px;
     line-height: 55px;
     text-align: center;
     width: 180px;
     height: calc(100vh - 60px);
     background-color: #fff;
     border-right: 1px solid #dadada;
-
+    color: rgb(27, 42, 96);
     .isActived {
-      background-color: #a4cab6;
-      color: #fd760e;
+      color: rgb(73, 93, 184);
     }
 
     div {
       cursor: pointer;
       &:hover {
-        color: #fd760e;
+        color: #fff;
+        background-color: rgb(73, 93, 184);
       }
     }
   }
 
   .main-content {
-    padding: 10px;
     width: calc(100vw - 180px);
   }
 }

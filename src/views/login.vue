@@ -1,31 +1,30 @@
 
 <template>
-  <n-card title="欢迎您" class="main">
-    <n-spin :show="isLoading">
-      <n-form ref="formRef" :model="model" :rules="rules">
-        <n-form-item label="账号" path="account">
-          <n-input v-model:value="model.account" placeholder="" />
-        </n-form-item>
-        <n-form-item label="密码" path="password">
-          <n-input type="password" v-model:value="model.password" placeholder="" @keydown.enter="login" />
-        </n-form-item>
-        <div style="
+
+  <div class="background">
+    <n-card title="欢迎您" class="main">
+      <n-spin :show="isLoading">
+        <n-form ref="formRef" :model="model" :rules="rules">
+          <n-form-item label="账号" path="account">
+            <n-input v-model:value="model.account" placeholder="" />
+          </n-form-item>
+          <n-form-item label="密码" path="password">
+            <n-input type="password" v-model:value="model.password" placeholder="" @keydown.enter="login" />
+          </n-form-item>
+          <div style="
             display: flex;
             justify-content: center;
             align-items: center;
             position: relative;
           ">
-          <n-checkbox v-model:checked="model.remember" style="position: absolute; left: 0">
-            记住我
-          </n-checkbox>
-          <n-button round type="primary" @click="login"> 登录 </n-button>
-        </div>
-      </n-form>
-    </n-spin>
-
-  </n-card>
-  <div class="background">
-
+            <n-checkbox v-model:checked="model.remember" style="position: absolute; left: 0">
+              记住我
+            </n-checkbox>
+            <n-button round type="primary" @click="login"> 登录 </n-button>
+          </div>
+        </n-form>
+      </n-spin>
+    </n-card>
   </div>
 </template>
 
@@ -140,12 +139,24 @@ const login = (e: MouseEvent) => {
 </script>
 
 <style scoped>
+.background {
+  width: 100%;
+  min-height: 100vh;
+  background-image: url(@/assets/img/background.jpg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  overflow: hidden;
+  position: relative;
+}
 .main {
   width: 500px;
-  position: fixed;
+  position: absolute;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
+  opacity: 0.9;
+  border-radius: 10px;
 }
 </style>
 
