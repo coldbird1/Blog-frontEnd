@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { ref, reactive, inject } from "vue";
+import { ref, reactive } from "vue";
 import { FormInst, FormItemRule, useMessage } from "naive-ui";
 import { useUserStore } from "@/store/user";
 import { useRouter, useRoute } from "vue-router";
 const router = useRouter();
 const route = useRoute();
 const userStore = useUserStore();
-const axios: any = inject("axios");
 const message = useMessage();
 
 const menus = [
@@ -77,14 +76,13 @@ const menuActive = (path: string): boolean => {
     border-right: 1px solid #dadada;
     color: rgb(27, 42, 96);
     .isActived {
-      color: rgb(73, 93, 184);
+      color: #fff;
+      background-color: rgb(73, 93, 184) !important;
     }
-
     div {
       cursor: pointer;
       &:hover {
-        color: #fff;
-        background-color: rgb(73, 93, 184);
+        background-color: rgb(243, 243, 245);
       }
     }
   }

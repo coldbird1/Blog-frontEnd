@@ -1,8 +1,5 @@
 import { Router, RouteRecordRaw, createRouter, createWebHashHistory } from 'vue-router'
-// import { useUserStore } from "@/store/user";
-// console.log(useUserStore);
-
-// const userStore = useUserStore();
+import { useUserStoreHook } from "@/store/user";
 
 let routes: Array<RouteRecordRaw> = [
   {
@@ -10,7 +7,7 @@ let routes: Array<RouteRecordRaw> = [
     redirect: '/login'
   },
   {
-    path: '/login',
+   path: '/login',
     component: () => import('@/views/login.vue')
   },
   {
@@ -49,17 +46,18 @@ function resetRouter() {
   (router as any).matcher = (newRouter as any).matcher // reset router
 }
 
-// router.beforeEach((to, _from, next) => {
-//   // if (to.path !== '/login') {
-//   //   if (userStore.token !== "") {
-//   //     next()
-//   //   } else {
-//   //     userStore.logOut()
-//   //   }
-//   // } else {
-//   //   next()
-//   // }
-// })
+//全局路由守卫
+router.beforeEach((to, _from, next) => {
+  if (to.path !== '/login') {
+    if (useUserStoreHook().token !== "") {
+      next()
+    } else {
+      useUserStoreHook().logOut()
+    }
+  } else {
+    next()
+  }
+})
 
 
 export default router

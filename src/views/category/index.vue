@@ -18,7 +18,7 @@
 
 <script setup lang="ts">
 import type { DataTableColumns, DataTableRowKey } from "naive-ui";
-import { ref, reactive, inject, h } from "vue";
+import { ref, reactive, h } from "vue";
 import { FormInst, FormItemRule, useMessage, NButton } from "naive-ui";
 import { useUserStore } from "@/store/user";
 import { useRouter, useRoute } from "vue-router";
@@ -27,7 +27,6 @@ import Modal from "./Modal.vue";
 
 const router = useRouter();
 const userStore = useUserStore();
-const axios: any = inject("axios");
 const message = useMessage();
 
 //table
@@ -81,7 +80,7 @@ const columns = createColumns({
 
 let data = ref(<any>[]); //Table数据
 let currentRow = {};
-let modalStatus = ref(1);
+let  modalStatus = ref(1);
 
 const getData = async () => {
   const res = await getList();
@@ -186,6 +185,8 @@ const modalSubmit = async (e: object) => {
 }
 .search-content {
   height: 50px;
+  display: flex;
+  align-items: center;
 }
 .table-container {
   width: 100%;

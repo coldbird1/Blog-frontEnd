@@ -8,12 +8,12 @@ const router = useRouter();
 const userStore = useUserStore();
 const message = useMessage();
 
-const props = defineProps(["showModal", "currentRow", "status"]);
-
-const emit = defineEmits(["close", "submit"]);
+const props = defineProps(["modalShow", "currentRow", "status"]);
+const emit = defineEmits(["close", "submit","upload:modalShow"]);
 
 const name = ref("");
-const data = props.currentRow;
+const data = reactive(props.currentRow);
+
 const enter = () => {
   //编辑反显类型
   if (props.status == 1) {
@@ -41,13 +41,14 @@ const submitCallback = () => {
 };
 
 const close = () => {
-  emit("close");
+  emit("upload:modalShow",props.modalShow)
+  // emit("close");
   name.value = "";
 };
 </script>
 
 <template>
-  <n-modal v-model:show="props.showModal" preset="dialog" title="确认" content="你确认?" positive-text="确认"
+  <n-modal v-model:show="props.modalShow" preset="dialog" title="确认" content="你确认?" positive-text="确认"
     negative-text="算了" @positive-click="submitCallback" @negative-click="cancelCallback" @close="close"
     @after-enter="enter">
     <template #header>

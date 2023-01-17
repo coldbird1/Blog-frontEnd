@@ -2,27 +2,29 @@
 <template>
   <div class="all">
     <div class="search-content">
-      <n-button type="error" @click="deleteFn">删除</n-button>
+      <n-button type="info" @click="addFn">新增</n-button>
+      <n-button type="error" @click="deleteFn" style="margin:0 10px">删除</n-button>
     </div>
     <div class="table-container">
       <n-data-table :columns="columns" :data="data" :pagination="pagination" :row-key="rowKey"
         @update:checked-row-keys="handleCheck" />
     </div>
   </div>
-
+  <Modal v-model:show="modalShow"></Modal>
 </template>
 
 <script setup lang="ts">
 import type { DataTableColumns, DataTableRowKey } from "naive-ui";
-import { ref, reactive, inject } from "vue";
+import { ref, reactive,onMounted } from "vue";
 import { FormInst, FormItemRule, useMessage } from "naive-ui";
 import { useUserStore } from "@/store/user";
 import { useRouter, useRoute } from "vue-router";
 import { getList, deleteArticle } from "@/api/article";
+import Modal from "./Modal.vue"
 
 const router = useRouter();
 const userStore = useUserStore();
-const axios: any = inject("axios");
+
 const message = useMessage();
 
 type RowData = {
@@ -53,8 +55,10 @@ const createColumns = (): DataTableColumns<RowData> => [
   },
 ];
 
+let modalShow=ref(false) //模态框显隐
 let data = ref(<any>[]); //Table数据
 
+  //获取列表数据
 const getData = async () => {
   const res = await getList();
   const { code, data: resData } = res;
@@ -63,9 +67,6 @@ const getData = async () => {
     checkedRowKeys.value = [];
   }
 };
-
-getData();
-// console.log(data);
 
 let checkedRowKeysRef = ref<DataTableRowKey[]>([]);
 let columns = createColumns();
@@ -112,6 +113,16 @@ const deleteFn = async () => {
     getData();
   }
 };
+
+//新增
+const addFn=async()=>{
+  modalShow.value=true
+}
+
+//Mounted
+onMounted(()=>{
+  getData();
+})
 </script>
 
 <style lang="scss" scoped>
@@ -121,6 +132,8 @@ const deleteFn = async () => {
 }
 .search-content {
   height: 50px;
+  display: flex;
+  align-items: center;
 }
 .table-container {
   width: 100%;

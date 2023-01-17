@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-// import { store } from "@/store";
+import { store } from "@/store";
 import { router, resetRouter } from "@/router";
 
 export interface userInfo {
@@ -56,6 +56,6 @@ export const useUserStore = defineStore('users', {
 
 })
 
-// export function useUserStoreHook() {
-//   return useUserStore(store);
-// }
+export function useUserStoreHook() {
+  return useUserStore(store);
+}

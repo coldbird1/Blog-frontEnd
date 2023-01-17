@@ -26,10 +26,13 @@
       </n-spin>
     </n-card>
   </div>
+
+  <div></div>
 </template>
 
+
 <script setup lang="ts">
-import { ref, reactive, inject } from "vue";
+import { ref, reactive } from "vue";
 import { FormInst, FormItemRule, useMessage } from "naive-ui";
 import { useUserStore } from "@/store/user";
 import { useRouter, useRoute } from "vue-router";
@@ -37,11 +40,11 @@ import { getLogin } from "@/api/user";
 
 const router = useRouter();
 const userStore = useUserStore();
-const axios: any = inject("axios");
+
 const message = useMessage();
 let isLoading = ref(false);
 
-interface login_info {
+interface login_info{
   code: number;
   msg: string;
   data: any;
