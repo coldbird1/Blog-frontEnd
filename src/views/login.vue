@@ -102,6 +102,7 @@ const login = (e: MouseEvent) => {
             let userInfo = {
               account: data.account,
               token: data.token,
+              userName:data.userName,
               expires: data.expires,
             };
             //保存用户信息

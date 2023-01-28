@@ -9,21 +9,24 @@
       <n-data-table :columns="columns" :data="data" :pagination="pagination" :row-key="rowKey"
         @update:checked-row-keys="handleCheck" />
     </div>
+    
+    <Modal v-model:show="modalShow" @submit="modalSubmit"  ref="modal"></Modal>
   </div>
-  <Modal v-model:show="modalShow"></Modal>
-</template>
 
+</template>
+ 
 <script setup lang="ts">
 import type { DataTableColumns, DataTableRowKey } from "naive-ui";
-import { ref, reactive,onMounted } from "vue";
-import { FormInst, FormItemRule, useMessage } from "naive-ui";
+import { ref, reactive,onMounted,h} from "vue";
+import { FormInst, FormItemRule, useMessage,useDialog } from "naive-ui";
 import { useUserStore } from "@/store/user";
 import { useRouter, useRoute } from "vue-router";
-import { getList, deleteArticle } from "@/api/article";
+import { getList, deleteArticle,addArticle } from "@/api/article";
 import Modal from "./Modal.vue"
 
 const router = useRouter();
 const userStore = useUserStore();
+const dialog=useDialog()
 
 const message = useMessage();
 
@@ -32,9 +35,17 @@ type RowData = {
   author?: string;
   title: string;
   content: string | null;
+  category_id:number,
+  category_name:string
 };
 
-const createColumns = (): DataTableColumns<RowData> => [
+//查看文章详情
+const openDetailFn=(row:RowData)=>{
+  console.log(row);
+  
+}
+
+const createColumns = ({openDetail}:{openDetail:(row:RowData)=>void}): DataTableColumns<RowData> => [
   {
     type: "selection",
     // disabled(row: RowData) {
@@ -44,21 +55,38 @@ const createColumns = (): DataTableColumns<RowData> => [
   {
     title: "标题",
     key: "title",
+    render (row) {
+        return h(
+          'span',
+          {
+            class:'title-text',
+            onClick: () => openDetail(row)
+          },
+          [
+            row.title
+          ]
+        )
+    }
+  },
+  {
+    title: "作者",
+    key: "author",
   },
   {
     title: "类别",
     key: "category_name",
   },
   {
-    title: "修改时间",
+    title: "创建时间",
     key: "create_time",
   },
 ];
 
 let modalShow=ref(false) //模态框显隐
-let data = ref(<any>[]); //Table数据
+let data:any = ref([]); //Table数据
+let modal=ref()
 
-  //获取列表数据
+//获取列表数据
 const getData = async () => {
   const res = await getList();
   const { code, data: resData } = res;
@@ -69,7 +97,7 @@ const getData = async () => {
 };
 
 let checkedRowKeysRef = ref<DataTableRowKey[]>([]);
-let columns = createColumns();
+let columns = createColumns({ openDetail(row: RowData) {openDetailFn(row)},});
 let checkedRowKeys = checkedRowKeysRef;
 const pagination = reactive({
   page: 1,
@@ -103,20 +131,56 @@ const handleCheck = (rowKeys: DataTableRowKey[]) => {
   checkedRowKeysRef.value = rowKeys;
 };
 
+
 //删除
 const deleteFn = async () => {
-  console.log(checkedRowKeys.value);
-  const { code, msg } = await deleteArticle({ ids: checkedRowKeys.value });
-  if (code === 200) {
-    message.success("删除成功");
-    checkedRowKeysRef.value = [];
-    getData();
-  }
+
+if (checkedRowKeys.value.length<1) {
+  message.warning('请至少选择一条数据删除')
+  return false
+}
+
+  dialog.warning({
+          title: '警告',
+          content: '确认删除吗？',
+          positiveText: '确定',
+          negativeText: '不确定',
+          onPositiveClick: async() => {
+            const { code, msg } = await deleteArticle({ ids: checkedRowKeys.value });
+            if (code === 200) {
+              message.success("删除成功");
+              checkedRowKeysRef.value = [];
+              getData();
+            }
+          },
+          onNegativeClick: () => {
+            
+          }
+  })
 };
 
-//新增
+//新增按钮，打开模态框
 const addFn=async()=>{
   modalShow.value=true
+  console.log(modalShow.value);
+}
+
+
+//接收Modal提交的数据,新增文章
+const modalSubmit=async(data:any)=>{
+  console.log("接收Modal提交的数据",  data);
+  let submitData={
+   title:data.title,
+   content:data.content,
+   category_id:data.categoryId,
+   author:userStore.userName
+  }
+  const res=await addArticle(submitData)
+  const {code,msg}=res
+  if (code===200) {
+    message.success('添加成功')
+  }
+  getData()
 }
 
 //Mounted
@@ -141,6 +205,12 @@ onMounted(()=>{
 }
 :deep(.n-data-table__pagination) {
   padding: 8px;
+}
+:deep(.title-text){
+  color:#2080f0;
+  &:hover{
+    cursor: pointer;
+  }
 }
 </style>
 

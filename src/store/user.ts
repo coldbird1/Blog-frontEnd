@@ -5,6 +5,7 @@ import { router, resetRouter } from "@/router";
 export interface userInfo {
   account: string,
   token: string,
+  userName: string,
   expires: number
 }
 
@@ -13,6 +14,7 @@ export const useUserStore = defineStore('users', {
     return {
       account: '',
       token: '',
+      userName: '',
       expires: 0,
     }
   },
@@ -30,12 +32,14 @@ export const useUserStore = defineStore('users', {
     setUersInfo(data: userInfo) {
       this.account = data.account
       this.token = data.token
+      this.userName = data.userName
       this.expires = data.expires
     },
     //登出
     logOut() {
-      this.account = "";
-      this.token = "";
+      this.account = ""
+      this.token = ""
+      this.userName = ""
       this.expires = 0
       router.push("/login");
       // resetRouter()

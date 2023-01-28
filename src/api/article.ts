@@ -45,3 +45,8 @@ export const getList = (data?: object) => {
 export const deleteArticle = (data?: object) => {
   return http.request<deleteResult>("delete", "/blog/_token/delete", { data });
 };
+
+/* 新增文章 */
+export const addArticle = (data?: object) => {
+  return http.request<deleteResult>("post", "/blog/_token/add", { data });
+};
