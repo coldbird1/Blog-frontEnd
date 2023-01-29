@@ -18,9 +18,10 @@ const message = useMessage();
 
 const userStore = useUserStore();
 
+export const baseURL = "http://localhost:8080"
 // 相关配置请参考：www.axios-js.com/zh-cn/docs/#axios-request-config-1
 const defaultConfig: AxiosRequestConfig = {
-  // baseURL: "http://localhost:8080",
+  baseURL,
   // 请求超时时间
   timeout: 10000,
   headers: {

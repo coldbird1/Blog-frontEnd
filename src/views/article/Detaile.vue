@@ -10,24 +10,17 @@ const router = useRouter();
 const userStore = useUserStore();
 const message = useMessage();
 
-//提交数据
-interface submitData{
-  title:string,
-  categoryId:number|null,
-  content:string|undefined
-}
 
 const props=withDefaults(
-  defineProps<{ show?: boolean, status?: (string|number),currentRow?:any }>(),{
+  defineProps<{ show: boolean,detailData:any }>(),{
     show:false,
-    status:'1',
-    currentRow:{}
+    detailData:{}
   }
 );
-const emit = defineEmits(["close", "submit","update:show"]);
+const emit = defineEmits(["close","update:show"]);
 
 const modalShow = computed({
-  get() {
+  get() {    
     return props.show;
   },
   set(v) {
@@ -36,14 +29,16 @@ const modalShow = computed({
 });
 
 
-
 </script>
 
 <template>
 <div class="modal-content">
-  <n-drawer v-model:show="modalShow" :width="502" placement="right">
-    <n-drawer-content title="斯通纳">
-      《斯通纳》是美国作家约翰·威廉姆斯在 1965 年出版的小说。
+  <n-drawer v-model:show="modalShow" :width="950" placement="right" >
+    <n-drawer-content title="文章详情" >
+      <div>
+        <h2 class="title">{{ props.detailData.title }}</h2>
+        <div v-html="props.detailData.content" class="content"></div>
+      </div>
     </n-drawer-content>
   </n-drawer>
 </div>
@@ -52,8 +47,15 @@ const modalShow = computed({
 
 
 <style lang="scss" scoped>
-
-
+.title{
+  text-align: center;
+}
+.content{
+  margin: 10px 0;
+ :deep(img){
+  max-width: 100% ;
+  }
+}
 
 </style>
 

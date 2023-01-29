@@ -38,8 +38,10 @@
 
 <script lang="ts">
 import '@wangeditor/editor/dist/css/style.css';
-import { onBeforeUnmount, ref, shallowRef, onMounted } from 'vue';
+import { onBeforeUnmount, ref, shallowRef, onMounted } from 'vue'
+import { IEditorConfig} from '@wangeditor/editor';
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue';
+import {baseURL} from '@/utils/http/index'
 
 export default {
   components: { Editor, Toolbar },
@@ -58,7 +60,32 @@ export default {
     // });
 
     const toolbarConfig = {};
-    const editorConfig = { placeholder: '请输入内容...' };
+    const editorConfig: Partial<IEditorConfig> = { placeholder: '请输入内容...', MENU_CONF: {} };
+
+    //上传文件配置
+    (editorConfig as any).MENU_CONF['uploadImage'] = {
+      server: baseURL+'/upload/rich_editor_upload',
+      fieldName: 'custom-field-name',
+      base64LimitSize: 10 * 1024, // 10kb
+      // 自定义插入图片
+      customInsert(res: any, insertFn: any) {  // TS 语法
+         let url=res.data.url
+         url=url.indexOf('http')!==0?`${baseURL}${url}`:url
+         insertFn(url)
+      },
+    };
+
+
+    //上传视频配置
+    (editorConfig as any).MENU_CONF['uploadVideo'] = {
+     server: baseURL+'/upload/rich_editor_upload',
+      // 自定义插入
+      customInsert(res: any, insertFn: any) {  // TS 语法
+       let url=res.data.url
+       url=url.indexOf('http')!==0?`${baseURL}${url}`:url
+       insertFn(url)
+    },
+    };
 
     // 组件销毁时，也及时销毁编辑器，重要！
     onBeforeUnmount(() => {
@@ -71,6 +98,8 @@ export default {
     // 编辑器回调函数
     const handleCreated = (editor:any) => {
       console.log('created', editor);
+      console.log(editor.getMenuConfig('uploadImage'));
+      
       editorRef.value = editor; // 记录 editor 实例，重要！
     };
     const handleChange = (editor:any) => {

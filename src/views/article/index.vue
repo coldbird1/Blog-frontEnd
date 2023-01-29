@@ -11,18 +11,20 @@
     </div>
     
     <Modal v-model:show="modalShow" @submit="modalSubmit"  ref="modal"></Modal>
+    <Detail v-model:show="detailShow" :detailData="detailData" ref="detail"></Detail>
   </div>
 
 </template>
  
 <script setup lang="ts">
-import type { DataTableColumns, DataTableRowKey } from "naive-ui";
+import { DataTableColumns, DataTableRowKey, NButton } from "naive-ui";
 import { ref, reactive,onMounted,h} from "vue";
 import { FormInst, FormItemRule, useMessage,useDialog } from "naive-ui";
 import { useUserStore } from "@/store/user";
 import { useRouter, useRoute } from "vue-router";
 import { getList, deleteArticle,addArticle } from "@/api/article";
 import Modal from "./Modal.vue"
+import Detail from "./Detaile.vue"
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -40,12 +42,24 @@ type RowData = {
 };
 
 //查看文章详情
+const detailShow=ref(false)
+let detailData={}
 const openDetailFn=(row:RowData)=>{
+  detailShow.value=true
+  detailData=reactive(row)
   console.log(row);
-  
 }
 
-const createColumns = ({openDetail}:{openDetail:(row:RowData)=>void}): DataTableColumns<RowData> => [
+//编辑文章
+const editFn=(row:RowData)=>{
+  console.log('编辑',row);
+}
+
+const createColumns = ({openDetail,edit}:
+{openDetail:(row:RowData)=>void,
+ edit:(row:RowData)=>void,
+}):
+ DataTableColumns<RowData> => [
   {
     type: "selection",
     // disabled(row: RowData) {
@@ -80,6 +94,22 @@ const createColumns = ({openDetail}:{openDetail:(row:RowData)=>void}): DataTable
     title: "创建时间",
     key: "create_time",
   },
+  {
+    title: "操作",
+    key: "actions",
+    render (row) {
+        return h(
+          NButton,
+          {
+            strong: true,
+            tertiary: true,
+            size: "small",
+            onClick: () => edit(row)
+          },
+          { default: () => "编辑" }
+        )
+    }
+  },
 ];
 
 let modalShow=ref(false) //模态框显隐
@@ -97,7 +127,7 @@ const getData = async () => {
 };
 
 let checkedRowKeysRef = ref<DataTableRowKey[]>([]);
-let columns = createColumns({ openDetail(row: RowData) {openDetailFn(row)},});
+let columns = createColumns({ openDetail(row: RowData) {openDetailFn(row)},edit(row: RowData) {editFn(row)},});
 let checkedRowKeys = checkedRowKeysRef;
 const pagination = reactive({
   page: 1,
