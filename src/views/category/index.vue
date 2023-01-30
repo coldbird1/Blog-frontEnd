@@ -10,7 +10,7 @@
         @update:checked-row-keys="handleCheck" />
     </div>
 
-    <Modal :showModal="modalShow" :currentRow="currentRow" :status="modalStatus" @close="modalClose"
+    <Modal v-model:showModal="modalShow" :currentRow="currentRow" :status="modalStatus" @close="modalClose"
       @submit="modalSubmit"></Modal>
   </div>
 
@@ -19,7 +19,7 @@
 <script setup lang="ts">
 import type { DataTableColumns, DataTableRowKey } from "naive-ui";
 import { ref, reactive, h } from "vue";
-import { FormInst, FormItemRule, useMessage, NButton } from "naive-ui";
+import { FormInst, FormItemRule, useMessage, NButton,useDialog } from "naive-ui";
 import { useUserStore } from "@/store/user";
 import { useRouter, useRoute } from "vue-router";
 import { getList, deleteItem, addItem, editItem } from "@/api/category";
@@ -28,6 +28,7 @@ import Modal from "./Modal.vue";
 const router = useRouter();
 const userStore = useUserStore();
 const message = useMessage();
+const dialog= useDialog()
 
 //table
 type RowData = {
@@ -129,13 +130,29 @@ const handleCheck = (rowKeys: DataTableRowKey[]) => {
 
 //删除
 const deleteFn = async () => {
-  console.log(checkedRowKeys.value);
-  const { code, msg } = await deleteItem({ ids: checkedRowKeys.value });
-  if (code === 200) {
-    message.success("删除成功");
-    checkedRowKeysRef.value = [];
-    getData();
-  }
+
+if (checkedRowKeys.value.length<1) {
+  message.warning('请至少选择一条数据删除')
+  return false
+}
+
+  dialog.warning({
+          title: '警告',
+          content: '确认删除吗？',
+          positiveText: '确定',
+          negativeText: '不确定',
+          onPositiveClick: async() => {
+            const { code, msg } = await deleteItem({ ids: checkedRowKeys.value });
+            if (code === 200) {
+              message.success("删除成功");
+              checkedRowKeysRef.value = [];
+              getData();
+            }
+          },
+          onNegativeClick: () => {
+            
+          }
+  })
 };
 
 /* 搜索框 */

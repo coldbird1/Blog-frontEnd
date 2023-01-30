@@ -39,8 +39,6 @@ const bodyStyle={
 }
 const richText=ref<InstanceType<typeof richTextEditor>>()
 
-
-
 //分类
 interface optionsType{
   value:number,
@@ -100,13 +98,18 @@ const enter = async() => {
    }
    
 
-  //编辑反显类型
+  //根据打开时状态判断添加或编辑
   if (props.status == 1) {
     title.value = "";
   }
   if (props.status == 2) {
     console.log(props.currentRow);
-    title.value = props.currentRow.name;
+    title.value = props.currentRow.title;
+    selectedValue.value=props.currentRow.category_id
+    if (richText.value) {
+      richText.value.valueHtml=props.currentRow.content
+    }
+    
   }
 
 };
@@ -127,7 +130,7 @@ const close = () => {
     negative-text="算了" @positive-click="submitCallback" @negative-click="cancelCallback" @close="close"
     @after-enter="enter"  :mask-closable="false" :style="bodyStyle">
     <template #header>
-      <div>{{ status==1?'新增':'修改' }}</div>
+      <div>{{ status==1?'新增':'编辑' }}</div>
     </template>
     <div class="head-content">    
       <div class="title">

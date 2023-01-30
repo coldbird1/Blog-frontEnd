@@ -6,30 +6,28 @@
       <n-button type="error" @click="deleteFn" style="margin:0 10px">删除</n-button>
     </div>
     <div class="table-container">
-      <n-data-table :columns="columns" :data="data" :pagination="pagination" :row-key="rowKey"
+      <n-data-table max-height="700px" :columns="columns" :data="data" :pagination="pagination" :row-key="rowKey"
         @update:checked-row-keys="handleCheck" />
     </div>
     
-    <Modal v-model:show="modalShow" @submit="modalSubmit"  ref="modal"></Modal>
-    <Detail v-model:show="detailShow" :detailData="detailData" ref="detail"></Detail>
+    <Modal v-model:show="modalShow" @submit="modalSubmit" :currentRow="currentRow" :status="modalStatus" ref="modal"></Modal>
+    <Detail v-model:show="detailShow" :detailData="currentRow" ref="detail"></Detail>
   </div>
 
 </template>
  
 <script setup lang="ts">
-import { DataTableColumns, DataTableRowKey, NButton } from "naive-ui";
+import { DataTableColumns, DataTableRowKey, NButton,FormInst, FormItemRule, useMessage,useDialog} from "naive-ui";
 import { ref, reactive,onMounted,h} from "vue";
-import { FormInst, FormItemRule, useMessage,useDialog } from "naive-ui";
 import { useUserStore } from "@/store/user";
 import { useRouter, useRoute } from "vue-router";
-import { getList, deleteArticle,addArticle } from "@/api/article";
+import { getList, deleteArticle,addArticle,editArticle } from "@/api/article";
 import Modal from "./Modal.vue"
 import Detail from "./Detaile.vue"
 
 const router = useRouter();
 const userStore = useUserStore();
 const dialog=useDialog()
-
 const message = useMessage();
 
 type RowData = {
@@ -41,17 +39,37 @@ type RowData = {
   category_name:string
 };
 
+//文章显示编辑状态（1显示2编辑）
+const modalStatus = ref(1);
+
 //查看文章详情
 const detailShow=ref(false)
-let detailData={}
+let currentRow:RowData={
+  id: 0,
+  author: '',
+  title: '',
+  content: '',
+  category_id:0,
+  category_name:'',
+}
 const openDetailFn=(row:RowData)=>{
   detailShow.value=true
-  detailData=reactive(row)
+  currentRow=reactive(row)
   console.log(row);
 }
 
-//编辑文章
+//点击新增文章
+const addFn=async()=>{
+  modalStatus.value=1
+  modalShow.value=true
+  console.log(modalShow.value);
+}
+
+//点击编辑文章
 const editFn=(row:RowData)=>{
+  modalStatus.value=2
+  currentRow=reactive(row)
+  modalShow.value=true
   console.log('编辑',row);
 }
 
@@ -118,10 +136,16 @@ let modal=ref()
 
 //获取列表数据
 const getData = async () => {
-  const res = await getList();
-  const { code, data: resData } = res;
+  let {page,pageSize}=pagination
+  console.log('page',page);
+  console.log('pageSize',pageSize);
+  
+  
+  const res = await getList({page,pageSize});
+  const { code, data: resData,count } = res;
   if (code == 200) {
     data.value = resData;
+    // pagination.page=
     checkedRowKeys.value = [];
   }
 };
@@ -152,8 +176,10 @@ const pagination = reactive({
     pagination.page = page;
   },
   onUpdatePageSize: (pageSize: number) => {
+    console.log('onUpdatePageSize');
     pagination.pageSize = pageSize;
     pagination.page = 1;
+    getData()
   },
 });
 const rowKey = (row: RowData) => row.id;
@@ -189,16 +215,12 @@ if (checkedRowKeys.value.length<1) {
   })
 };
 
-//新增按钮，打开模态框
-const addFn=async()=>{
-  modalShow.value=true
-  console.log(modalShow.value);
-}
-
 
 //接收Modal提交的数据,新增文章
 const modalSubmit=async(data:any)=>{
   console.log("接收Modal提交的数据",  data);
+
+if (modalStatus.value===1) {
   let submitData={
    title:data.title,
    content:data.content,
@@ -209,8 +231,23 @@ const modalSubmit=async(data:any)=>{
   const {code,msg}=res
   if (code===200) {
     message.success('添加成功')
+    getData()
   }
-  getData()
+}else{
+  let submitData={
+   title:data.title,
+   content:data.content,
+   category_id:data.categoryId,
+   author:userStore.userName,
+   id:currentRow.id
+  }
+  const res=await editArticle(submitData)
+  const {code,msg}=res
+  if (code===200) {
+    message.success('编辑成功')
+    getData()
+  }
+}
 }
 
 //Mounted

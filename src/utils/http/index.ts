@@ -72,14 +72,14 @@ class PureHttp {
         // 开启进度条动画
         // NProgress.start();
         // 优先判断post/get等方法是否传入回掉，否则执行初始化设置等回掉
-        if (typeof config.beforeRequestCallback === "function") {
-          config.beforeRequestCallback(config);
-          return config;
-        }
-        if (PureHttp.initConfig.beforeRequestCallback) {
-          PureHttp.initConfig.beforeRequestCallback(config);
-          return config;
-        }
+        // if (typeof config.beforeRequestCallback === "function") {
+        //   config.beforeRequestCallback(config);
+        //   return config;
+        // }
+        // if (PureHttp.initConfig.beforeRequestCallback) {
+        //   PureHttp.initConfig.beforeRequestCallback(config);
+        //   return config;
+        // }
         /** 请求白名单，放置一些不需要token的接口（通过设置请求白名单，防止token过期后再请求造成的死循环问题） */
         const whiteList = ["/login"];
         return whiteList.some(v => config.url!.indexOf(v) > -1)
@@ -157,6 +157,8 @@ class PureHttp {
 
     // 单独处理自定义请求/响应回掉
     return new Promise((resolve, reject) => {
+      console.log('config', config);
+
       PureHttp.axiosInstance
         .request(config)
         .then((response: any) => {
