@@ -3,10 +3,17 @@
   <div class="all">
     <div class="search-content">
       <n-button type="info" @click="addFn">新增</n-button>
-      <n-button type="error" @click="deleteFn" style="margin:0 10px">删除</n-button>
+      <n-button type="error" @click="deleteFn">删除</n-button>
+      <n-input v-model:value="searchObj.keyword"  
+      placeholder="输入关键字搜索" 
+      style="width:15%" clearable 
+      @keydown.enter="searchFn"
+      @onClear="searchFn"
+      ></n-input>
+      <n-button type="primary" @click="searchFn">搜索</n-button>
     </div>
     <div class="table-container">
-      <n-data-table max-height="700px" :columns="columns" :data="data" :pagination="pagination" :row-key="rowKey"
+      <n-data-table max-height="700px" min-height="700px" :columns="columns" :data="data" :pagination="pagination" remote :row-key="rowKey"
         @update:checked-row-keys="handleCheck" />
     </div>
     
@@ -39,8 +46,19 @@ type RowData = {
   category_name:string
 };
 
+type searchType={
+  keyword?:string,
+  category_id?:number
+}
+
 //文章显示编辑状态（1显示2编辑）
 const modalStatus = ref(1);
+
+//搜索部分
+const searchObj:searchType=reactive({})
+const searchFn=()=>{
+  getData()
+}
 
 //查看文章详情
 const detailShow=ref(false)
@@ -137,16 +155,17 @@ let modal=ref()
 //获取列表数据
 const getData = async () => {
   let {page,pageSize}=pagination
-  console.log('page',page);
-  console.log('pageSize',pageSize);
-  
-  
-  const res = await getList({page,pageSize});
+
+  const res = await getList({page,pageSize,...searchObj});
   const { code, data: resData,count } = res;
   if (code == 200) {
     data.value = resData;
-    // pagination.page=
+    pagination.pageSize=pageSize
+    pagination.itemCount=count
+
     checkedRowKeys.value = [];
+    console.log(data.value.length);
+    console.log(pagination.pageSize);
   }
 };
 
@@ -155,13 +174,14 @@ let columns = createColumns({ openDetail(row: RowData) {openDetailFn(row)},edit(
 let checkedRowKeys = checkedRowKeysRef;
 const pagination = reactive({
   page: 1,
-  pageSize: 10,
+  pageSize: 15,
+  itemCount:1,
   showSizePicker: true,
   pageSizes: [
-    {
-      label: "10 / 页",
-      value: 10,
-    },
+    // {
+    //   label: "10 / 页",
+    //   value: 10,
+    // },
     {
       label: "15 / 页",
       value: 15,
@@ -171,9 +191,12 @@ const pagination = reactive({
       value: 20,
     },
   ],
-  // suffix:'页',
+  prefix ({ itemCount }) {
+    return `共 ${itemCount} 条`
+  },
   onChange: (page: number) => {
     pagination.page = page;
+    getData()
   },
   onUpdatePageSize: (pageSize: number) => {
     console.log('onUpdatePageSize');
@@ -265,6 +288,9 @@ onMounted(()=>{
   height: 50px;
   display: flex;
   align-items: center;
+  &>*{
+    margin-right: 10px;
+  }
 }
 .table-container {
   width: 100%;
