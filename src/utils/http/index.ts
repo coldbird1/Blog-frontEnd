@@ -13,8 +13,11 @@ import { stringify } from "qs";
 // import { getToken, formatToken } from "@/utils/auth";
 import { useUserStore } from "@/store/user";
 import { router } from "@/router";
-import { FormInst, FormItemRule, useMessage } from "naive-ui";
-const message = useMessage();
+import { createDiscreteApi } from "naive-ui";
+
+const { message, notification, dialog, loadingBar } = createDiscreteApi(
+  ['message', 'dialog', 'notification', 'loadingBar'],
+)
 
 const userStore = useUserStore();
 
@@ -89,18 +92,16 @@ class PureHttp {
             if (token) {
               const now = new Date().getTime();
               const expired = userStore.expires - now <= 0;
-              // console.log('userStore.expires', userStore.expires);
-              // console.log('now', now);
               if (expired) {
-                // token过期刷新返回登录页      
-                // message.error('登陆过期，请重新登录')
+                // token过期刷新返回登录页     
+                message.error('登陆已过期，请重新登录')
                 userStore.logOut()
               } else {
                 config.headers!["token"] = token
                 resolve(config);
               }
             } else {
-              // message.error('登陆过期，请重新登录')
+              message.error('登陆已过期，请重新登录')
               userStore.logOut()
             }
           });

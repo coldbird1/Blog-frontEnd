@@ -51,7 +51,7 @@ const createColumns = ({
     },
 
     {
-      title: "标题",
+      title: "名称",
       key: "name",
     },
     {

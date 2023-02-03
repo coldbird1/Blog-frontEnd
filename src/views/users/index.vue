@@ -21,7 +21,7 @@ import { DataTableColumns, DataTableRowKey, NButton,FormInst, FormItemRule, useM
 import { ref, reactive,onMounted,h} from "vue";
 import { useUserStore } from "@/store/user";
 import { useRouter, useRoute } from "vue-router";
-import { getList, deleteArticle,addArticle,editArticle } from "@/api/article";
+import { getList } from "@/api/user";
 // import Modal from "./Modal.vue"
 // import Detail from "./Detaile.vue"
 
@@ -85,32 +85,12 @@ const createColumns = ({openDetail,edit}:
     // },
   },
   {
-    title: "标题",
-    key: "title",
-    render (row) {
-        return h(
-          'span',
-          {
-            class:'title-text',
-            onClick: () => openDetail(row)
-          },
-          [
-            row.title
-          ]
-        )
-    }
+    title: "用户名",
+    key: "userName",
   },
   {
-    title: "作者",
-    key: "author",
-  },
-  {
-    title: "类别",
-    key: "category_name",
-  },
-  {
-    title: "创建时间",
-    key: "create_time",
+    title: "账号",
+    key: "account",
   },
   {
     title: "操作",
@@ -194,12 +174,12 @@ if (checkedRowKeys.value.length<1) {
           positiveText: '确定',
           negativeText: '不确定',
           onPositiveClick: async() => {
-            const { code, msg } = await deleteArticle({ ids: checkedRowKeys.value });
-            if (code === 200) {
-              message.success("删除成功");
-              checkedRowKeysRef.value = [];
-              getData();
-            }
+            // const { code, msg } = await deleteArticle({ ids: checkedRowKeys.value });
+            // if (code === 200) {
+            //   message.success("删除成功");
+            //   checkedRowKeysRef.value = [];
+            //   getData();
+            // }
           },
           onNegativeClick: () => {
             
@@ -213,32 +193,32 @@ const modalSubmit=async(data:any)=>{
   console.log("接收Modal提交的数据",  data);
 
 if (modalStatus.value===1) {
-  let submitData={
-   title:data.title,
-   content:data.content,
-   category_id:data.categoryId,
-   author:userStore.userName
-  }
-  const res=await addArticle(submitData)
-  const {code,msg}=res
-  if (code===200) {
-    message.success('添加成功')
-    getData()
-  }
+  // let submitData={
+  //  title:data.title,
+  //  content:data.content,
+  //  category_id:data.categoryId,
+  //  author:userStore.userName
+  // }
+  // const res=await addArticle(submitData)
+  // const {code,msg}=res
+  // if (code===200) {
+  //   message.success('添加成功')
+  //   getData()
+  // }
 }else{
-  let submitData={
-   title:data.title,
-   content:data.content,
-   category_id:data.categoryId,
-   author:userStore.userName,
-   id:currentRow.id
-  }
-  const res=await editArticle(submitData)
-  const {code,msg}=res
-  if (code===200) {
-    message.success('编辑成功')
-    getData()
-  }
+  // let submitData={
+  //  title:data.title,
+  //  content:data.content,
+  //  category_id:data.categoryId,
+  //  author:userStore.userName,
+  //  id:currentRow.id
+  // }
+  // const res=await editArticle(submitData)
+  // const {code,msg}=res
+  // if (code===200) {
+  //   message.success('编辑成功')
+  //   getData()
+  // }
 }
 }
 

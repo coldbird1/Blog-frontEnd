@@ -31,8 +31,16 @@
       </div>
     </div>
     <div class="table-container">
-      <n-data-table max-height="700px" min-height="700px" :columns="columns" :data="data" :pagination="pagination" remote :row-key="rowKey"
-        @update:checked-row-keys="handleCheck" />
+      <n-data-table 
+      max-height="700px" 
+      min-height="700px" 
+      :columns="columns" 
+      :data="data" 
+      :pagination="pagination" 
+      remote :row-key="rowKey"
+      @update:checked-row-keys="handleCheck" 
+      @update:sorter="handleSorterChange"
+      />
     </div>
     
     <Modal v-model:show="modalShow" @submit="modalSubmit" :currentRow="currentRow" :status="modalStatus" ref="modal"></Modal>
@@ -43,7 +51,7 @@
  
 <script setup lang="ts">
 import { DataTableColumns, DataTableRowKey, NButton,FormInst, FormItemRule, useMessage,useDialog} from "naive-ui";
-import { ref, reactive,onMounted,h} from "vue";
+import { ref, reactive,onMounted,h,inject} from "vue";
 import { useUserStore } from "@/store/user";
 import { useRouter, useRoute } from "vue-router";
 import { getList, deleteArticle,addArticle,editArticle } from "@/api/article";
@@ -51,11 +59,13 @@ import { getList as getCategoryList,optionsType } from "@/api/category";
 
 import Modal from "./Modal.vue"
 import Detail from "./Detaile.vue"
+import { random } from "lodash";
 
 const router = useRouter();
 const userStore = useUserStore();
 const dialog=useDialog()
 const message = useMessage();
+const dayJs:any=inject('dayJs')
 
 type RowData = {
   id: number;
@@ -63,12 +73,15 @@ type RowData = {
   title: string;
   content: string | null;
   category_id:number,
-  category_name:string
+  category_name:string,
+  create_time:string
 };
 
 type searchType={
   keyword?:string,
-  category_id?:number
+  category_id?:number,
+  columnKey?:string,
+  order?:string|boolean
 }
 
 //文章显示编辑状态（1显示2编辑）
@@ -113,6 +126,7 @@ let currentRow:RowData={
   content: '',
   category_id:0,
   category_name:'',
+  create_time:''
 }
 const openDetailFn=(row:RowData)=>{
   detailShow.value=true
@@ -158,6 +172,7 @@ const createColumns = ({openDetail,edit}:
           },
           [
             row.title
+            // dayJs(row.create_time).unix()
           ]
         )
     }
@@ -173,6 +188,7 @@ const createColumns = ({openDetail,edit}:
   {
     title: "创建时间",
     key: "create_time",
+    sorter: (rowA, rowB) => dayJs(rowA.create_time).unix()-dayJs(rowB.create_time).unix()
   },
   {
     title: "操作",
@@ -200,9 +216,6 @@ let modal=ref()
 const getData = async () => {
   let {page,pageSize}=pagination
   let searchData={page,pageSize,...searchObj}
-  if (searchData?.category_id===0) {
-    delete searchData?.category_id
-  }
   const res = await getList(searchData);
   const { code, data: resData,count } = res;
   if (code == 200) {
@@ -215,6 +228,19 @@ const getData = async () => {
     console.log(pagination.pageSize);
   }
 };
+
+//排序
+const handleSorterChange=(sorter:any)=>{
+console.log('sorter',sorter);
+if (sorter.order) {
+  searchObj.order=sorter.order=='descend'?'DESC':'ASC'
+  searchObj.columnKey=sorter.columnKey
+}else{
+  searchObj.order=''
+  searchObj.columnKey=''
+}
+getData()
+}
 
 let checkedRowKeysRef = ref<DataTableRowKey[]>([]);
 let columns = createColumns({ openDetail(row: RowData) {openDetailFn(row)},edit(row: RowData) {editFn(row)},});
@@ -342,7 +368,7 @@ onMounted(()=>{
   .operate-content{
   display: flex;
   justify-content: space-between;
-  width: 120px;
+  width: 122px;
   }
   
   .search-content{

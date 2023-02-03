@@ -7,7 +7,7 @@ let routes: Array<RouteRecordRaw> = [
     redirect: '/login'
   },
   {
-   path: '/login',
+    path: '/login',
     component: () => import('@/views/login.vue')
   },
   {

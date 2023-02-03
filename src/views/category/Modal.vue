@@ -55,7 +55,7 @@ const close = () => {
     </template>
     <div class="content">
       <span class="label">名称</span>
-      <n-input class="input-content" placeholder="请输入分类名称" v-model:value="name"></n-input>
+      <n-input class="input-content" placeholder="请输入分类名称" v-model:value="name" @keydown.enter="submitCallback"></n-input>
     </div>
 
   </n-modal>

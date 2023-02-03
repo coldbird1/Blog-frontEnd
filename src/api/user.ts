@@ -35,6 +35,10 @@ export const getLogin = (data?: object) => {
   return http.request<UserResult>("post", "/admin/login", { data });
 };
 
+/** 列表 */
+export const getList = (data?: object) => {
+  return http.request<UserResult>("get", "/admin/list", { data });
+};
 // /** 刷新token */
 // export const refreshTokenApi = (data?: object) => {
 //   return http.request<RefreshTokenResult>("post", "/refreshToken", { data });
