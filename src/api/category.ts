@@ -7,10 +7,10 @@ export type listResult = {
   /**  返回信息 */
   msg: string,
   /* 返回数据 */
-  data: dataType[]
+  data: optionsType[]
 }
 
-export type dataType = {
+export interface optionsType {
   id: number,
   name: string
 }

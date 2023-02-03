@@ -1,3 +1,33 @@
+<template>
+  <div class="modal-content">
+    <n-modal v-model:show="modalShow" preset="dialog" title="确认" content="你确认?" positive-text="确认"
+      negative-text="算了" @positive-click="submitCallback" @negative-click="cancelCallback" @close="close"
+      @after-enter="enter"  :mask-closable="false" :style="bodyStyle">
+      <template #header>
+        <div>{{ status==1?'新增':'编辑' }}</div>
+      </template>
+      <div class="head-content">    
+        <div class="title">
+         <span class="label">标题: </span>
+         <n-input class="input-content" placeholder="请输入文章标题" v-model:value="title" ></n-input>
+        </div>
+        <div class="category">
+          <span class="label">分类: </span>
+          <n-select
+            v-model:value="selectedValue"
+            filterable
+            placeholder="请选择文章分类"
+            :options="options"
+          />
+        </div>
+      </div>
+  
+      <richTextEditor ref="richText"></richTextEditor>
+    </n-modal>
+  </div>
+  
+  </template>
+
 <script setup lang="ts">
 import { ref, reactive, toRefs,watch,computed } from "vue";
 import { FormInst, FormItemRule, useMessage } from "naive-ui";
@@ -9,6 +39,7 @@ import { Interface } from "readline";
 const router = useRouter();
 const userStore = useUserStore();
 const message = useMessage();
+
 
 //提交数据
 interface submitData{
@@ -123,36 +154,6 @@ const close = () => {
 
 
 </script>
-
-<template>
-<div class="modal-content">
-  <n-modal v-model:show="modalShow" preset="dialog" title="确认" content="你确认?" positive-text="确认"
-    negative-text="算了" @positive-click="submitCallback" @negative-click="cancelCallback" @close="close"
-    @after-enter="enter"  :mask-closable="false" :style="bodyStyle">
-    <template #header>
-      <div>{{ status==1?'新增':'编辑' }}</div>
-    </template>
-    <div class="head-content">    
-      <div class="title">
-       <span class="label">标题: </span>
-       <n-input class="input-content" placeholder="请输入文章标题" v-model:value="title" ></n-input>
-      </div>
-      <div class="category">
-        <span class="label">分类: </span>
-        <n-select
-          v-model:value="selectedValue"
-          filterable
-          placeholder="请选择文章分类"
-          :options="options"
-        />
-      </div>
-    </div>
-
-    <richTextEditor ref="richText"></richTextEditor>
-  </n-modal>
-</div>
-
-</template>
 
 
 <style lang="scss" scoped>

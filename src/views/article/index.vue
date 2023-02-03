@@ -1,16 +1,34 @@
 
 <template>
   <div class="all">
-    <div class="search-content">
-      <n-button type="info" @click="addFn">新增</n-button>
-      <n-button type="error" @click="deleteFn">删除</n-button>
-      <n-input v-model:value="searchObj.keyword"  
+    <div class="top-content">
+      <div class="operate-content">
+        <n-button type="info" @click="addFn">新增</n-button>
+        <n-button type="error" @click="deleteFn">删除</n-button>
+      </div>
+      <div class="search-content">
+        <div class="category">
+          <span class="label">分类: </span>
+          <n-select
+            :consistent-menu-width="false" 
+            class="select-content"
+            v-model:value="searchObj.category_id"
+            filterable
+            placeholder="分类"
+            :options="categoryOptions"
+            @update:value="categoryChange()"
+          />
+        </div>
+      <n-input 
+      class="keyword-content"
+      v-model:value="searchObj.keyword"  
       placeholder="输入关键字搜索" 
-      style="width:15%" clearable 
+      clearable 
       @keydown.enter="searchFn"
-      @onClear="searchFn"
+      @clear="clearFn"
       ></n-input>
       <n-button type="primary" @click="searchFn">搜索</n-button>
+      </div>
     </div>
     <div class="table-container">
       <n-data-table max-height="700px" min-height="700px" :columns="columns" :data="data" :pagination="pagination" remote :row-key="rowKey"
@@ -29,6 +47,8 @@ import { ref, reactive,onMounted,h} from "vue";
 import { useUserStore } from "@/store/user";
 import { useRouter, useRoute } from "vue-router";
 import { getList, deleteArticle,addArticle,editArticle } from "@/api/article";
+import { getList as getCategoryList,optionsType } from "@/api/category";
+
 import Modal from "./Modal.vue"
 import Detail from "./Detaile.vue"
 
@@ -55,10 +75,34 @@ type searchType={
 const modalStatus = ref(1);
 
 //搜索部分
-const searchObj:searchType=reactive({})
+const searchObj:searchType=reactive({keyword:'',category_id:0})
 const searchFn=()=>{
   getData()
 }
+const clearFn=()=>{
+  searchObj.keyword=''
+  getData()
+}
+
+//分类列表
+ const categoryOptions=ref<{value:number,label:string}[]>([])
+ //获取数据
+ const getOptionsFn=async()=>{
+  const res= await getCategoryList()
+   const { code, data: resData } = res;
+   console.log(resData);
+   
+   if (code===200) {
+    let list=resData.map(e=>{return {value:e.id,label:e.name}})
+    list.unshift({value:0,label:'全部'})
+    categoryOptions.value=list
+   }
+ }
+
+ const categoryChange=()=>{
+  getData()
+ }
+
 
 //查看文章详情
 const detailShow=ref(false)
@@ -155,8 +199,11 @@ let modal=ref()
 //获取列表数据
 const getData = async () => {
   let {page,pageSize}=pagination
-
-  const res = await getList({page,pageSize,...searchObj});
+  let searchData={page,pageSize,...searchObj}
+  if (searchData?.category_id===0) {
+    delete searchData?.category_id
+  }
+  const res = await getList(searchData);
   const { code, data: resData,count } = res;
   if (code == 200) {
     data.value = resData;
@@ -191,7 +238,7 @@ const pagination = reactive({
       value: 20,
     },
   ],
-  prefix ({ itemCount }) {
+  prefix ({ itemCount }:{itemCount:any}) {
     return `共 ${itemCount} 条`
   },
   onChange: (page: number) => {
@@ -275,7 +322,8 @@ if (modalStatus.value===1) {
 
 //Mounted
 onMounted(()=>{
-  getData();
+  getData()
+  getOptionsFn()
 })
 </script>
 
@@ -284,14 +332,39 @@ onMounted(()=>{
   @include main-content;
   background-image: url(@/assets/img/article.jpg);
 }
-.search-content {
+.top-content {
+  position: relative;
   height: 50px;
   display: flex;
   align-items: center;
-  &>*{
-    margin-right: 10px;
+  justify-content: space-between;
+
+  .operate-content{
+  display: flex;
+  justify-content: space-between;
+  width: 120px;
   }
+  
+  .search-content{
+    display: flex;
+    margin-right: 0;
+    &>*{
+      margin-left: 10px;
+    };
+    .category{
+     display: flex;width: 140px;
+     .label{width: 30%;display: flex;align-items: center;color: #fff;};
+     .select-content{
+      flex:1
+      }
+    }
+    .keyword-content{
+      width: 200px;
+    }
 }
+
+}
+
 .table-container {
   width: 100%;
   background-color: #fff;
