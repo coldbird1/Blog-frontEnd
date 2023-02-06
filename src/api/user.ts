@@ -18,6 +18,13 @@ export type UserResult = {
   }
 }
 
+export type commonResult = {
+  /* 返回状态 */
+  code: number,
+  /**  返回信息 */
+  msg: string,
+}
+
 // export type RefreshTokenResult = {
 //   success: boolean;
 //   data: {
@@ -38,6 +45,16 @@ export const getLogin = (data?: object) => {
 /** 列表 */
 export const getList = (data?: object) => {
   return http.request<UserResult>("get", "/admin/list", { data });
+};
+
+/* 修改密码*/
+export const editItem = (data?: object) => {
+  return http.request<commonResult>("put", "/admin/_token/update", { data });
+};
+
+/**注册 */
+export const regiestAccount = (data?: object) => {
+  return http.request<commonResult>("post", "/admin/add", { data });
 };
 // /** 刷新token */
 // export const refreshTokenApi = (data?: object) => {

@@ -2,8 +2,17 @@
 <template>
 
   <div class="background">
-    <n-card title="欢迎您" class="main">
-      <n-spin :show="isLoading">
+    <n-card class="main">
+    <n-spin :show="isLoading">
+    <n-tabs
+      class="card-tabs"
+      default-value="signin"
+      size="large"
+      animated
+      style="margin: 0 -4px"
+      pane-style="padding-left: 4px; padding-right: 4px; box-sizing: border-box;"
+    >
+      <n-tab-pane name="signin" tab="登录">
         <n-form ref="formRef" :model="model" :rules="rules">
           <n-form-item label="账号" path="account">
             <n-input v-model:value="model.account" placeholder="" />
@@ -11,18 +20,56 @@
           <n-form-item label="密码" path="password">
             <n-input type="password" v-model:value="model.password" placeholder="" @keydown.enter="login" />
           </n-form-item>
-          <div style="
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-          ">
+          <div style="display: flex;justify-content: center;align-items: center;position: relative;">
             <n-checkbox v-model:checked="model.remember" style="position: absolute; left: 0">
               记住我
             </n-checkbox>
             <n-button round type="primary" @click="login"> 登录 </n-button>
           </div>
         </n-form>
+      </n-tab-pane>
+      <n-tab-pane name="signup" tab="注册">
+          <n-form ref="regiestFormRef" :model="regiestModel" :rules="regiestRules">
+            <n-form-item label="昵称" path="userName">
+              <n-input
+               v-model:value="regiestModel.userName"
+               @keydown.enter.prevent
+             />
+            </n-form-item>
+            <n-form-item path="account" label="账号">
+             <n-input
+               v-model:value="regiestModel.account"
+               @keydown.enter.prevent
+             />
+           </n-form-item>
+           <n-form-item path="password" label="密码">
+             <n-input
+               v-model:value="regiestModel.password"
+               type="password"
+               @input="handlePasswordInput"
+               @keydown.enter.prevent
+             />
+           </n-form-item>
+           <n-form-item
+             ref="rPasswordFormItemRef"
+             first
+             path="reenteredPassword"
+             label="重复密码"
+           >
+             <n-input
+               v-model:value="regiestModel.reenteredPassword"
+               :disabled="!regiestModel.password"
+               type="password"
+               @keydown.enter.prevent
+             />
+           </n-form-item>
+       
+         </n-form>
+        <n-button type="primary" block secondary strong @click="regiestFn">
+          注册
+        </n-button>
+      </n-tab-pane>
+    </n-tabs>
       </n-spin>
     </n-card>
   </div>
@@ -33,10 +80,10 @@
 
 <script setup lang="ts">
 import { ref, reactive } from "vue";
-import { FormInst, FormItemRule, useMessage } from "naive-ui";
+import { FormInst, FormItemRule, useMessage,FormRules,FormItemInst } from "naive-ui";
 import { useUserStore } from "@/store/user";
 import { useRouter, useRoute } from "vue-router";
-import { getLogin } from "@/api/user";
+import { getLogin,regiestAccount } from "@/api/user";
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -50,6 +97,7 @@ interface login_info{
   data: any;
 }
 
+ /**登陆部分 */ 
 const model = reactive({
   account: "",
   password: "",
@@ -140,6 +188,93 @@ const login = (e: MouseEvent) => {
     messageReactive.destroy();
   });
 };
+
+
+
+/**注册部分 */
+interface regiestModelType {
+  userName:string|null,
+  account:string|null,
+  password: string | null
+  reenteredPassword: string | null
+}
+
+const regiestFormRef = ref<FormInst | null>(null)
+const rPasswordFormItemRef = ref<FormItemInst | null>(null)
+const regiestModel=reactive<regiestModelType>({userName:null,account:null,password:null,reenteredPassword:null})
+
+const regiestRules: FormRules = {
+  account:[
+        {
+          required: true,
+          message: '请输入账号'
+        }
+  ],
+  password: [
+        {
+          required: true,
+          message: '请输入新密码'
+        }
+      ],
+   reenteredPassword: [
+     {
+       required: true,
+       message: '请再次输入新密码',
+       trigger: ['input', 'blur']
+     },
+     {
+       validator: validatePasswordStartWith,
+       message: '两次密码输入不一致',
+       trigger: 'input'
+     },
+     {
+       validator: validatePasswordSame,
+       message: '两次密码输入不一致',
+       trigger: ['blur', 'password-input']
+     }
+   ]
+}
+
+function validatePasswordStartWith (
+      rule: FormItemRule,
+      value: string
+    ): boolean {
+      return (
+        !!regiestModel.password &&
+        regiestModel.password.startsWith(value) &&
+        regiestModel.password.length >= value.length
+      )
+    }
+
+function validatePasswordSame (rule: FormItemRule, value: string): boolean {
+      return value === regiestModel.password
+}
+
+const regiestFn = () => {
+    regiestFormRef.value?.validate(async(errors) => {
+             if (!errors) {
+               let {code,msg}= await regiestAccount(regiestModel)
+               if(code===200){
+                message.success('注册成功')
+                // model.account=regiestModel.account
+               }else{
+                message.error('注册失败:'+msg)
+               }
+             } else {
+               message.error('填写有误，重填！')
+
+             }
+     })
+};
+
+
+//校验
+const handlePasswordInput= ()=> {
+   if (regiestModel.reenteredPassword) {
+     rPasswordFormItemRef.value?.validate({ trigger: 'password-input' })
+   }
+}
+
 </script>
 
 <style scoped>

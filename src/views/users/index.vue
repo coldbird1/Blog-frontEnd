@@ -10,8 +10,8 @@
         @update:checked-row-keys="handleCheck" />
     </div>
     
-    <!-- <Modal v-model:show="modalShow" @submit="modalSubmit" :currentRow="currentRow" :status="modalStatus" ref="modal"></Modal>
-    <Detail v-model:show="detailShow" :detailData="currentRow" ref="detail"></Detail> -->
+    <Modal  @submit="modalSubmit" :currentRow="currentRow" :status="modalStatus" ref="modal"></Modal>
+    <!-- <Detail v-model:show="detailShow" :detailData="currentRow" ref="detail"></Detail> -->
   </div>
 
 </template>
@@ -21,8 +21,8 @@ import { DataTableColumns, DataTableRowKey, NButton,FormInst, FormItemRule, useM
 import { ref, reactive,onMounted,h} from "vue";
 import { useUserStore } from "@/store/user";
 import { useRouter, useRoute } from "vue-router";
-import { getList } from "@/api/user";
-// import Modal from "./Modal.vue"
+import { getList,editItem as editPassword } from "@/api/user";
+import Modal from "./Modal.vue"
 // import Detail from "./Detaile.vue"
 
 const router = useRouter();
@@ -32,11 +32,8 @@ const message = useMessage();
 
 type RowData = {
   id: number;
-  author?: string;
-  title: string;
-  content: string | null;
-  category_id:number,
-  category_name:string
+  account: string;
+  userName: string;
 };
 
 //文章显示编辑状态（1显示2编辑）
@@ -44,18 +41,11 @@ const modalStatus = ref(1);
 
 //查看文章详情
 const detailShow=ref(false)
-let currentRow:RowData={
-  id: 0,
-  author: '',
-  title: '',
-  content: '',
-  category_id:0,
-  category_name:'',
-}
+//当前选中行
+let currentRow=ref<RowData>()
 const openDetailFn=(row:RowData)=>{
   detailShow.value=true
-  currentRow=reactive(row)
-  console.log(row);
+  currentRow.value=row
 }
 
 //点击新增文章
@@ -65,11 +55,10 @@ const addFn=async()=>{
   console.log(modalShow.value);
 }
 
-//点击编辑文章
+//点击修改密码
 const editFn=(row:RowData)=>{
-  modalStatus.value=2
-  currentRow=reactive(row)
-  modalShow.value=true
+  currentRow.value=row
+  modal.value.open()
   console.log('编辑',row);
 }
 
@@ -102,9 +91,13 @@ const createColumns = ({openDetail,edit}:
             strong: true,
             tertiary: true,
             size: "small",
-            onClick: () => edit(row)
+            type:"primary",
+            onClick: () => { 
+              console.log('edit',edit);
+              
+              edit(row)}
           },
-          { default: () => "编辑" }
+          { default: () => "修改密码" }
         )
     }
   },
@@ -123,6 +116,7 @@ const getData = async () => {
     checkedRowKeys.value = [];
   }
 };
+
 
 let checkedRowKeysRef = ref<DataTableRowKey[]>([]);
 let columns = createColumns({ openDetail(row: RowData) {openDetailFn(row)},edit(row: RowData) {editFn(row)},});
@@ -188,38 +182,16 @@ if (checkedRowKeys.value.length<1) {
 };
 
 
-//接收Modal提交的数据,新增文章
+//接收Modal提交的数据,修改密码
 const modalSubmit=async(data:any)=>{
   console.log("接收Modal提交的数据",  data);
+  const res=await editPassword(data)
+  const {code,msg}=res
+  if (code===200) {
+    message.success('密码修改成功')
+    getData()
+  }
 
-if (modalStatus.value===1) {
-  // let submitData={
-  //  title:data.title,
-  //  content:data.content,
-  //  category_id:data.categoryId,
-  //  author:userStore.userName
-  // }
-  // const res=await addArticle(submitData)
-  // const {code,msg}=res
-  // if (code===200) {
-  //   message.success('添加成功')
-  //   getData()
-  // }
-}else{
-  // let submitData={
-  //  title:data.title,
-  //  content:data.content,
-  //  category_id:data.categoryId,
-  //  author:userStore.userName,
-  //  id:currentRow.id
-  // }
-  // const res=await editArticle(submitData)
-  // const {code,msg}=res
-  // if (code===200) {
-  //   message.success('编辑成功')
-  //   getData()
-  // }
-}
 }
 
 //Mounted

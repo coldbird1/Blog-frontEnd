@@ -43,7 +43,7 @@
       />
     </div>
     
-    <Modal v-model:show="modalShow" @submit="modalSubmit" :currentRow="currentRow" :status="modalStatus" ref="modal"></Modal>
+    <Modal v-model:show="modalShow" @submit="modalSubmit" :currentRow="currentRow" :status="modalStatus" ></Modal>
     <Detail v-model:show="detailShow" :detailData="currentRow" ref="detail"></Detail>
   </div>
 
@@ -119,19 +119,11 @@ const clearFn=()=>{
 
 //查看文章详情
 const detailShow=ref(false)
-let currentRow:RowData={
-  id: 0,
-  author: '',
-  title: '',
-  content: '',
-  category_id:0,
-  category_name:'',
-  create_time:''
-}
+let currentRow=ref()
+
 const openDetailFn=(row:RowData)=>{
   detailShow.value=true
-  currentRow=reactive(row)
-  console.log(row);
+  currentRow.value=row
 }
 
 //点击新增文章
@@ -144,7 +136,7 @@ const addFn=async()=>{
 //点击编辑文章
 const editFn=(row:RowData)=>{
   modalStatus.value=2
-  currentRow=reactive(row)
+  currentRow.value=row
   modalShow.value=true
   console.log('编辑',row);
 }
@@ -210,7 +202,6 @@ const createColumns = ({openDetail,edit}:
 
 let modalShow=ref(false) //模态框显隐
 let data:any = ref([]); //Table数据
-let modal=ref()
 
 //获取列表数据
 const getData = async () => {
@@ -335,7 +326,7 @@ if (modalStatus.value===1) {
    content:data.content,
    category_id:data.categoryId,
    author:userStore.userName,
-   id:currentRow.id
+   id:currentRow.value.id
   }
   const res=await editArticle(submitData)
   const {code,msg}=res

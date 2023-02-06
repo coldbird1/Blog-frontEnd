@@ -80,8 +80,8 @@ const columns = createColumns({
 });
 
 let data = ref(<any>[]); //Table数据
-let currentRow = {};
-let  modalStatus = ref(1);
+let currentRow =ref();
+let modalStatus = ref(1);
 
 const getData = async () => {
   const res = await getList();
@@ -167,7 +167,7 @@ const addFn = () => {
 //编辑
 const modalEdit = (e: RowData) => {
   modalStatus.value = 2;
-  currentRow = reactive(e);
+  currentRow.value =e;
   modalShow.value = true;
 };
 //关闭
