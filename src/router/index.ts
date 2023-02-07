@@ -31,6 +31,14 @@ let routes: Array<RouteRecordRaw> = [
         component: () => import('@/views/users/index.vue')
       }
     ]
+  },
+  {
+    path: '/404',
+    component: () => import('@/views/resultPage/404.vue')
+  },
+  {
+    path: '/:pathMatch(.*)', //匹配未定义的路由
+    redirect: '/404' //重定向
   }
 ]
 
