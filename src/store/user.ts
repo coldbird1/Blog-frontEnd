@@ -1,11 +1,11 @@
-import { defineStore } from "pinia";
-import { store } from "@/store";
-import { router, resetRouter } from "@/router";
+import { defineStore } from 'pinia'
+import { store } from '@/store'
+import { router, resetRouter } from '@/router'
 
 export interface userInfo {
-  account: string,
-  token: string,
-  userName: string,
+  account: string
+  token: string
+  userName: string
   expires: number
 }
 
@@ -15,7 +15,7 @@ export const useUserStore = defineStore('users', {
       account: '',
       token: '',
       userName: '',
-      expires: 0,
+      expires: 0
     }
   },
   getters: {
@@ -37,29 +37,26 @@ export const useUserStore = defineStore('users', {
     },
     //登出
     logOut() {
-      this.account = ""
-      this.token = ""
-      this.userName = ""
+      this.account = ''
+      this.token = ''
+      this.userName = ''
       this.expires = 0
-      router.push("/login");
+      router.push('/login')
       // resetRouter()
-    },
+    }
   },
   // 开启数据缓存
   persist: {
     enabled: true,
     strategies: [
       {
-        key: 'pinia_userInfo',//设置存储的key
-        storage: localStorage,//表示存储在localStorage
+        key: 'pinia_userInfo', //设置存储的key
+        storage: localStorage //表示存储在localStorage
       }
     ]
   }
-
-
-
 })
 
 export function useUserStoreHook() {
-  return useUserStore(store);
+  return useUserStore(store)
 }

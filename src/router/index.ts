@@ -1,5 +1,5 @@
 import { Router, RouteRecordRaw, createRouter, createWebHashHistory } from 'vue-router'
-import { useUserStoreHook } from "@/store/user";
+import { useUserStoreHook } from '@/store/user'
 
 let routes: Array<RouteRecordRaw> = [
   {
@@ -20,20 +20,18 @@ let routes: Array<RouteRecordRaw> = [
       },
       {
         path: 'category',
-        component: () => import('@/views/category/index.vue'),
+        component: () => import('@/views/category/index.vue')
       },
       {
         path: 'article',
-        component: () => import('@/views/article/index.vue'),
+        component: () => import('@/views/article/index.vue')
       },
       {
         path: 'users',
-        component: () => import('@/views/users/index.vue'),
-      },
+        component: () => import('@/views/users/index.vue')
+      }
     ]
   }
-
-
 ]
 
 const router: Router = createRouter({
@@ -42,14 +40,14 @@ const router: Router = createRouter({
 })
 
 function resetRouter() {
-  const newRouter = router;
-  (router as any).matcher = (newRouter as any).matcher // reset router
+  const newRouter = router
+  ;(router as any).matcher = (newRouter as any).matcher // reset router
 }
 
 //全局路由守卫
 router.beforeEach((to, _from, next) => {
   if (to.path !== '/login') {
-    if (useUserStoreHook().token !== "") {
+    if (useUserStoreHook().token !== '') {
       next()
     } else {
       useUserStoreHook().logOut()
@@ -58,7 +56,6 @@ router.beforeEach((to, _from, next) => {
     next()
   }
 })
-
 
 export default router
 export { router, routes, resetRouter }

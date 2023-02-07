@@ -19,20 +19,18 @@ let routes: Array<RouteRecordRaw> = [
       },
       {
         path: 'category',
-        component: () => import('@/views/category/index.vue'),
+        component: () => import('@/views/category/index.vue')
       },
       {
         path: 'article',
-        component: () => import('@/views/article/index.vue'),
+        component: () => import('@/views/article/index.vue')
       },
       {
         path: 'users',
-        component: () => import('@/views/users/index.vue'),
-      },
+        component: () => import('@/views/users/index.vue')
+      }
     ]
   }
-
-
 ]
 
 const router: Router = createRouter({
