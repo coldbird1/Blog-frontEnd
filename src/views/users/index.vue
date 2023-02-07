@@ -24,7 +24,7 @@
   import { ref, reactive, onMounted, h } from 'vue'
   import { useUserStore } from '@/store/user'
   import { useRouter, useRoute } from 'vue-router'
-  import { getList, editItem as editPassword } from '@/api/user'
+  import { getList, editItem as editPassword, deleteItem } from '@/api/user'
   import Modal from './Modal.vue'
   // import Detail from "./Detaile.vue"
 
@@ -178,12 +178,12 @@
       positiveText: '确定',
       negativeText: '不确定',
       onPositiveClick: async () => {
-        // const { code, msg } = await deleteArticle({ ids: checkedRowKeys.value });
-        // if (code === 200) {
-        //   message.success("删除成功");
-        //   checkedRowKeysRef.value = [];
-        //   getData();
-        // }
+        const { code, msg } = await deleteItem({ ids: checkedRowKeys.value })
+        if (code === 200) {
+          message.success('删除成功')
+          checkedRowKeysRef.value = []
+          getData()
+        }
       },
       onNegativeClick: () => {}
     })

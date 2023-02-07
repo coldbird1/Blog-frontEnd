@@ -51,10 +51,16 @@ export const editItem = (data?: object) => {
   return http.request<commonResult>('put', '/admin/_token/update', { data })
 }
 
-/**注册 */
+/** 注册 */
 export const regiestAccount = (data?: object) => {
   return http.request<commonResult>('post', '/admin/add', { data })
 }
+
+/** 删除 */
+export const deleteItem = (data?: object) => {
+  return http.request<commonResult>('delete', '/admin/_token/delete', { data })
+}
+
 // /** 刷新token */
 // export const refreshTokenApi = (data?: object) => {
 //   return http.request<RefreshTokenResult>("post", "/refreshToken", { data });
