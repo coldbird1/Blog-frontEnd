@@ -31,8 +31,8 @@
     </div>
     <div class="table-container">
       <n-data-table
-        max-height="700px"
-        min-height="700px"
+        max-height="690px"
+        min-height="690px"
         :columns="columns"
         :data="data"
         :pagination="pagination"
@@ -252,8 +252,8 @@
     showSizePicker: true,
     pageSizes: [
       // {
-      //   label: "10 / 页",
-      //   value: 10,
+      //   label: '10 / 页',
+      //   value: 10
       // },
       {
         label: '15 / 页',

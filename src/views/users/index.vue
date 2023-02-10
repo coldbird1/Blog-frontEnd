@@ -10,6 +10,8 @@
         :data="data"
         :pagination="pagination"
         :row-key="rowKey"
+        max-height="690px"
+        min-height="690px"
         @update:checked-row-keys="handleCheck"
       />
     </div>
@@ -135,13 +137,14 @@
   let checkedRowKeys = checkedRowKeysRef
   const pagination = reactive({
     page: 1,
-    pageSize: 10,
+    pageSize: 15,
+    itemCount: 1,
     showSizePicker: true,
     pageSizes: [
-      {
-        label: '10 / 页',
-        value: 10
-      },
+      // {
+      //   label: '10 / 页',
+      //   value: 10
+      // },
       {
         label: '15 / 页',
         value: 15

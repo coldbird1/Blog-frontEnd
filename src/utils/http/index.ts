@@ -15,7 +15,7 @@ const { message, notification, dialog, loadingBar } = createDiscreteApi([
 
 const userStore = useUserStore()
 
-export const baseURL = 'http://localhost:8080'
+export const baseURL = 'http://localhost:1104'
 // 相关配置请参考：www.axios-js.com/zh-cn/docs/#axios-request-config-1
 const defaultConfig: AxiosRequestConfig = {
   baseURL,
